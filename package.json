@@ -1,0 +1,30 @@
+{
+  "name": "fileserver",
+  "version": "1.0.0",
+  "description": "file server",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "file",
+    "server"
+  ],
+  "author": "yuanliwei",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuanliwei/fileserver.git"
+  },
+  "dependencies": {
+    "@types/node": "^22.13.10",
+    "dayjs": "^1.11.13",
+    "koa": "^2.16.0",
+    "koa-router": "^13.0.1",
+    "log4js": "^6.9.1",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  }
+}

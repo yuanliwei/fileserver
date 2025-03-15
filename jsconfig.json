@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "target": "ESNext",
+    "module": "ESNext",
+    "types": [
+      "node"
+    ],
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    /**
+     * To have warnings / errors of the Svelte compiler at the
+     * correct position, enable source maps by default.
+     */
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    // "baseUrl": ".",
+    /**
+     * Typecheck JS in `.svelte` and `.js` files by default.
+     * Disable this if you'd like to use dynamic types.
+     */
+    "checkJs": true
+  },
+  /**
+   * Use global.d.ts instead of compilerOptions.types
+   * to avoid limiting type declarations.
+   */
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.js",
+    "src/**/*.test.js",
+    "src/**/*.svelte",
+    "./*.js",
+    "./*.d.ts",
+    "./*.test.js",
+    "./**/*.js",
+    "./**/*.test.js"
+  ]
+}
