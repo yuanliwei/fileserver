@@ -82,7 +82,7 @@ router.get('/front/health-status', async (ctx) => {
 })
 
 router.put('/upload', async (ctx) => {
-    let filename = ctx.header['x-filename'].toString()
+    let filename = decodeURIComponent(ctx.header['x-filename'].toString())
     let ret = await saveFileToDisk(ctx.origin, filename, ctx.req)
     console.info(JSON.stringify(ret))
     ctx.body = ret
@@ -113,6 +113,6 @@ router.get('/download/:sha1', async (ctx) => {
         ctx.body = { code: 1, msg: 'File not found' }
         return
     }
-    ctx.set('Content-Disposition', `attachment; filename="${info.name}"`)
+    ctx.set('Content-Disposition', `attachment; filename="${encodeURIComponent(info.name)}"`)
     ctx.body = createReadStream(info.path)
 })
