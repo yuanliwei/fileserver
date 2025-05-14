@@ -122,8 +122,8 @@ export async function initDbAndTables() {
         driver: sqlite3.Database
     })
 
-    let row = await database.get(`SELECT name FROM "main".sqlite_master WHERE name = 'fileinfo';`)
-    if (!row) await database.run(`CREATE TABLE IF NOT EXISTS "fileinfo" ( "sha1" TEXT NOT NULL UNIQUE, "url" TEXT, "name" TEXT, "path" BLOB, "size" NUMBER, "time" NUMBER, PRIMARY KEY("sha1") );`)
+    await database.run(`CREATE TABLE IF NOT EXISTS "fileinfo" ( "sha1" TEXT NOT NULL UNIQUE, "url" TEXT, "name" TEXT, "path" BLOB, "size" NUMBER, "time" NUMBER, PRIMARY KEY("sha1") );`)
+    await database.run(`CREATE INDEX IF NOT EXISTS fileinfo_time_idx ON fileinfo(time);`);
 }
 
 /**
@@ -159,3 +159,30 @@ export async function deleteFileInfo(sha1) {
     }
     await database.run(`DELETE FROM fileinfo WHERE sha1 = ?`, [sha1])
 }
+
+/**
+ * @returns {Promise<{name:string;count:number;}[]>}
+ */
+export async function listDataCatalog() {
+    if (!database) {
+        throw new Error("Database is not initialized")
+    }
+    const list = await database.all(`SELECT strftime('%Y%m', time/1000, 'unixepoch') AS name_,
+        COUNT(*) AS count FROM fileinfo GROUP BY name_ ORDER BY name_;`)
+    return list.map(o => ({ name: o.name_, count: o.count }))
+}
+
+/**
+ * @param {string | number | dayjs.Dayjs | Date} date
+ * @returns {Promise<FILEINFO[]>}
+ */
+export async function listDataByCatalog(date) {
+    if (!database) {
+        throw new Error("Database is not initialized")
+    }
+    let from = dayjs(date, 'YYYYMM').toDate().getTime()
+    let to = dayjs(date, 'YYYYMM').add(1, 'month').toDate().getTime()
+    const list = await database.all(`SELECT * FROM fileinfo where time >= ? and time < ? ORDER BY time;`, [from, to])
+    return list
+}
+

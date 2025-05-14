@@ -2,7 +2,7 @@ import Koa from "koa"
 import Router from 'koa-router'
 import log4js from 'log4js'
 import { createServer } from "node:http"
-import { changeRootDataDir, deleteFileInfo, findFileInfo, getRootDataDir, initDbAndTables, saveFileToDisk } from "./lib.js"
+import { changeRootDataDir, deleteFileInfo, findFileInfo, getRootDataDir, initDbAndTables, listDataByCatalog, listDataCatalog, saveFileToDisk } from "./lib.js"
 import { createReadStream } from "node:fs"
 
 const RELEASE_FILE_SERVER = process.env.RELEASE_FILE_SERVER
@@ -115,4 +115,15 @@ router.get('/download/:sha1', async (ctx) => {
     }
     ctx.set('Content-Disposition', `attachment; filename="${encodeURIComponent(info.name)}"`)
     ctx.body = createReadStream(info.path)
+})
+
+router.get('/catalog', async (ctx) => {
+    let catalog = await listDataCatalog()
+    ctx.body = { code: 0, msg: 'success', data: catalog }
+})
+
+router.get('/catalog/:date', async (ctx) => {
+    const date = ctx.params.date
+    let files = await listDataByCatalog(date)
+    ctx.body = { code: 0, msg: 'success', data: files }
 })
