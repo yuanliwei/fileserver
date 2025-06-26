@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import { deepStrictEqual, strictEqual } from 'node:assert'
 import { sha1 } from './lib.js'
 import { buffer } from 'node:stream/consumers'
+import mime from 'mime'
 
 const hostpath = `http://127.0.0.1:32109`
 
@@ -90,7 +91,7 @@ test('delete-file-info', async () => {
 
 test('listDataCatalog', async () => {
     // node --test-name-pattern="^listDataCatalog$" src/lib.test.js
-    const ret = await(await fetch(`${hostpath}/catalog`)).json()
+    const ret = await (await fetch(`${hostpath}/catalog`)).json()
     let catalog = ret.data
     deepStrictEqual(catalog, [
         { count: 284, name: '202503' },
@@ -101,7 +102,12 @@ test('listDataCatalog', async () => {
 
 test('listDataByCatalog', async () => {
     // node --test-name-pattern="^listDataByCatalog$" src/lib.test.js
-    const ret = await(await fetch(`${hostpath}/catalog/202503`)).json()
+    const ret = await (await fetch(`${hostpath}/catalog/202503`)).json()
     let files = ret.data
     strictEqual(files.length, 284)
+})
+
+test('mime', async () => {
+    // node --test-name-pattern="^mime$" src/lib.test.js
+    strictEqual(mime.getType(`20250626_en-GB-SoniaNeural_20250626151638118.wav`), 'audio/wav')
 })

@@ -4,6 +4,7 @@ import log4js from 'log4js'
 import { createServer } from "node:http"
 import { changeRootDataDir, deleteFileInfo, findFileInfo, getRootDataDir, initDbAndTables, listDataByCatalog, listDataCatalog, saveFileToDisk } from "./lib.js"
 import { createReadStream } from "node:fs"
+import mime from "mime"
 
 const RELEASE_FILE_SERVER = process.env.RELEASE_FILE_SERVER
 const ROOT_DIR_DATA = process.env.ROOT_DIR_DATA
@@ -114,6 +115,7 @@ router.get('/download/:sha1', async (ctx) => {
         return
     }
     ctx.set('Content-Disposition', `attachment; filename="${encodeURIComponent(info.name)}"`)
+    ctx.set('content-type', mime.getType(info.name))
     ctx.body = createReadStream(info.path)
 })
 
