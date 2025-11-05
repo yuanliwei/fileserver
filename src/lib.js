@@ -45,7 +45,7 @@ export function cleanFilename(filename) {
         return new Blob([str]).size
     }
 
-    const MAX_BYTE_LENGTH = 200
+    const MAX_BYTE_LENGTH = 240
 
     // 如果字节长度不超过限制，直接返回
     if (getByteLength(cleanedFilename) <= MAX_BYTE_LENGTH) {
