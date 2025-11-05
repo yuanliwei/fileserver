@@ -39,7 +39,61 @@ export function getRootDataDir() {
 export function cleanFilename(filename) {
     const illegalCharsRegex = /[<>:"\/\\|?*]/g
     const cleanedFilename = filename.replace(illegalCharsRegex, '')
-    return cleanedFilename
+
+    // 计算字符串的字节长度
+    const getByteLength = (str) => {
+        return new Blob([str]).size
+    }
+
+    const MAX_BYTE_LENGTH = 200
+
+    // 如果字节长度不超过限制，直接返回
+    if (getByteLength(cleanedFilename) <= MAX_BYTE_LENGTH) {
+        return cleanedFilename
+    }
+
+    // 使用二分查找找到合适的截断长度
+    let left = 0
+    let right = Math.floor(cleanedFilename.length / 2)
+
+    while (left <= right) {
+        const halfLength = Math.floor((left + right) / 2)
+        const leftPart = cleanedFilename.substring(0, halfLength)
+        const rightPart = cleanedFilename.substring(cleanedFilename.length - halfLength)
+        const result = leftPart + '...' + rightPart
+
+        if (getByteLength(result) <= MAX_BYTE_LENGTH) {
+            // 检查是否可以尝试更长的版本
+            const nextHalfLength = halfLength + 1
+            const nextLeftPart = cleanedFilename.substring(0, nextHalfLength)
+            const nextRightPart = cleanedFilename.substring(cleanedFilename.length - nextHalfLength)
+            const nextResult = nextLeftPart + '...' + nextRightPart
+
+            if (getByteLength(nextResult) <= MAX_BYTE_LENGTH) {
+                left = halfLength + 1
+            } else {
+                return result
+            }
+        } else {
+            right = halfLength - 1
+        }
+    }
+
+    // 如果二分查找失败，使用安全的截断方式
+    let safeResult = ''
+    for (let i = 0; i < Math.floor(cleanedFilename.length / 2); i++) {
+        const leftPart = cleanedFilename.substring(0, i)
+        const rightPart = cleanedFilename.substring(cleanedFilename.length - i)
+        const candidate = leftPart + '...' + rightPart
+
+        if (getByteLength(candidate) <= MAX_BYTE_LENGTH) {
+            safeResult = candidate
+        } else {
+            break
+        }
+    }
+
+    return safeResult || (cleanedFilename.substring(0, MAX_BYTE_LENGTH - 3) + '...')
 }
 
 /**

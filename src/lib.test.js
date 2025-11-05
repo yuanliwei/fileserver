@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import { deepStrictEqual, strictEqual } from 'node:assert'
-import { sha1 } from './lib.js'
+import { cleanFilename, sha1 } from './lib.js'
 import { buffer } from 'node:stream/consumers'
 import mime from 'mime'
 
@@ -110,4 +110,11 @@ test('listDataByCatalog', async () => {
 test('mime', async () => {
     // node --test-name-pattern="^mime$" src/lib.test.js
     strictEqual(mime.getType(`20250626_en-GB-SoniaNeural_20250626151638118.wav`), 'audio/wav')
+})
+
+test('cleanFilename', async () => {
+    // node --test-name-pattern="^cleanFilename$" src/lib.test.js
+    let name = cleanFilename(`【含老师手打分】成都都都（天天天天）-2025级11班-应应应-应应应应：应应应应应应应-5B20443D8A4AC67FD661841F3766ACE8-bb08b373eb7145b18c28cd4be1ec9bf5-分项评分-(20251105-1)-分分分分-[初中-应应应-应应]-(20251105-3).xlsx`)
+    strictEqual(name, `【含老师手打分】成都都都（天天天天）-2025级11班-应应应-应应应应：应应应应应应应-5B204...评分-(20251105-1)-分分分分-[初中-应应应-应应]-(20251105-3).xlsx`)
+    strictEqual(cleanFilename(name), `【含老师手打分】成都都都（天天天天）-2025级11班-应应应-应应应应：应应应应应应应-5B204...评分-(20251105-1)-分分分分-[初中-应应应-应应]-(20251105-3).xlsx`)
 })
