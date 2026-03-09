@@ -6,20 +6,13 @@ import { changeRootDataDir, deleteFileInfo, findFileInfo, getRootDataDir, initDb
 import { createReadStream } from "node:fs"
 import mime from "mime"
 
-const RELEASE_FILE_SERVER = process.env.RELEASE_FILE_SERVER
 const ROOT_DIR_DATA = process.env.ROOT_DIR_DATA
 
-if (RELEASE_FILE_SERVER) {
-    log4js.configure({
-        appenders: { stdout: { type: "stdout", layout: { type: 'pattern', pattern: '%p %m %f{2}:%l:%o' } } },
-        categories: { default: { appenders: ["stdout"], level: "debug", enableCallStack: true } },
-    })
-} else {
-    log4js.configure({
-        appenders: { stdout: { type: "stdout", layout: { type: 'pattern', pattern: '[%d{yyyy-MM-dd hh:mm:ss,SSS}] %[%p %m%] %f{2}:%l:%o' } } },
-        categories: { default: { appenders: ["stdout"], level: "debug", enableCallStack: true } },
-    })
-}
+const log4js_pattern = process.stdout.isTTY ? '[%d{yyyy-MM-dd hh:mm:ss,SSS}] %[%p %m%] %f{2}:%l:%o %F' : '%p %m %f{2}:%l:%o %F'
+log4js.configure({
+    appenders: { stdout: { type: "stdout", layout: { type: 'pattern', pattern: log4js_pattern } } },
+    categories: { default: { appenders: ["stdout"], level: "debug", enableCallStack: true } },
+})
 
 /** @type{*} */
 const _log4js_ = log4js.getLogger()
